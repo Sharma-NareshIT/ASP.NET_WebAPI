@@ -1,0 +1,50 @@
+	        ASP.NET Web API 
+- Build secure REST APIs on any platform with C#.
+- ASP.NET makes it easy to build services that reach a broad range of clients, including browsers and mobile devices.
+- You can use the same framework and patterns to build both web pages and services, side-by-side.
+
+Features:
+
+*This is the new framework for building HTTP services with easy and simple way.
+
+*Web API is open source an ideal platform for building REST-ful services over the .NET Framework.
+Unlike WCF Rest service, it use the full featues of HTTP (like URIs, request/response headers, caching, versioning, various content formats)
+
+*It also supports the MVC features such as routing, controllers, action results, filter, model binders, IOC container or dependency injection, unit testing that makes it more simple and robust.
+
+*It can be hosted with in the application or on IIS.
+
+*It is light weight architecture and good for devices which have limited bandwidth like smart phones.
+Responses are formatted by Web API’s MediaTypeFormatter into JSON, XML or whatever format you want to add as a MediaTypeFormatter.
+
+	          Web API Architecture
+
+- Client Side
+	1. HTML
+	2. CSS
+	3. JavaScript, JQuery, Angular Js, 
+	    Angular 2x, React, Vue, Blazor with C#
+	4. Cordova, NativeScript, Ionic
+- Server Side
+	1. C#  language
+	2. ASP.NET Framework with MVC
+	3. ADO.NET, 
+	    ADO.NET EF, 
+	    ADO.NET EF Core	
+- Database
+	1. Sql Server
+	2. Sql Server Local
+	3. MongoDb  etc..
+	    
+		Web API 2
+.NET Framework 4.5+   	[Latest 4.8]
+ASP.NET Framework 4.5+	[Latest 4.8]
+C# 6+			[Latest 8]
+Visual Studio 2019		[Latest 2019 - 16.5]
+
+- Download and Install - Visual Studio 2019
+	https://visualstudio.microsoft.com/vs/
+- Download .NET Core 3.1
+	https://dotnet.microsoft.com/download
+- Goto Command Prompt
+	> dotnet  --info
