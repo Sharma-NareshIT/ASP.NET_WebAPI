@@ -1,0 +1,81 @@
+	             Web API 2
+1. Open Visual Studio 2019
+2. Create New Project
+3. Select the Project Template
+	"ASP.NET Web Application"
+	       (.NET Framework)
+  Project Name	: ShoppingAPI
+  Location		: C:\WebAPIProjects
+  .NET Framework	: 4.7.2
+
+4. Select Web Application Template
+	"Web API"
+     [References for Web API and MVC are Selected]
+
+5. Select Authentication Type
+	"No Authentication"
+
+     [ Later you can choose: Windows, Individual User Accounts, Work and Organizational .. ]
+
+6. Goto "Advanced" category and Choose
+	 "Configure for Https"
+    [ It will download SSL certificate of you application]
+	    Secure Socket Layer
+7. Click Create
+
+
+Web API Project Structure:
+======================
+
+Component	Description
+---------------------------------------------------------------------------
+Connected Services   It shows all 3rd party services
+	                    connected to your application.
+		  it includes Azure, WCF services.
+
+App_Data		It comprises of local database
+		files like : ".mdf", ".sdf"
+
+App_Start		It comprises of classes that are
+		intended  to run on application
+		statup. It includes
+		  - RouteConfig.cs
+		  - BundleConfig.cs
+		  - FilterConfig.cs
+		  - WebApiConfig.cs
+
+Areas		It comprises of components
+		required for various domains
+		in same application. 
+		The components are cleanly
+		separated with individual 
+		controller, model and views.
+
+Controllers	Contains application specific
+		logic.
+
+Models		Contains data sepcific logic.
+
+Views		Contains Application UI.
+
+Content		It comprises of non-dynamic files
+		like CSS.
+
+Scripts		It comprises of dynamic files
+		like ".js".
+
+Font		It comprises of bootstrap fonts.
+
+Global.asax	It is global application class file.
+
+Web.Config	It is application configuration 		file.
+
+Package.config	It contains the list of packages
+		installed for your project.
+		NuGet Packages like
+		- EF, Bootstrap, Ajax, JQuery etc.
+
+
+
+
+
