@@ -1,0 +1,57 @@
+	           Web API Controller
+- Controller is the core MVC component.
+- It controls the overall application flow.
+- It comprises of Application Specific Logic.
+- It handels the request from consumer and process the request.
+- It generates a response back to the consumer.
+- Technically in ASP.NET Web API controller is a C# class.
+- It is derived from "ApiController" base class.
+- The library for Web API is defined in 
+	"System.Web.Http"
+- "ApiController" is a class defined in "System.Web.Http".
+- All Controller classes must be in "Controllers" folder
+         [Requests are Mapped to Controllers folder]
+
+- Every controller class must have the suffix 
+	"Controller"
+
+Adding a Controller into Project:
+----------------------------------------------
+ There are 2 ways to add a API controller class
+
+1. By using Scaffolding
+2. Manually adding a new Item and configuring as Controller.
+
+Manually Adding API Controller:
+- Right Click on Controllers folder
+- Add → New Item
+- Select "C# Class"
+- Name it as "ProductsController.cs"
+- Add into Project
+- Import the namespace "System.Web.Http"
+- Implement "ApiController" base class
+
+Syntax:
+using System.Web.Http;
+namespace ShoppingAPI.Controllers
+{
+    public class ProductsController : ApiController
+    {
+    }
+}
+
+Add Controller by using Scaffoling:
+- Right Click on Controllers folder
+- Add → New → Controller
+- Select "Web API 2 Empty Controller"
+- Name
+	"CategoriesController"
+- Add
+
+
+
+
+
+
+
+
