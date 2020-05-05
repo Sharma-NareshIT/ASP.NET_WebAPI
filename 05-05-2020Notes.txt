@@ -1,0 +1,97 @@
+	       Web API Action Methods
+- Action Method is a special type of method that is responsible for handling request from client and send  a customized response for every request.
+- IHttpActionResult  specifies what a controller action method must return. It is the base for all API results.
+- Usually API action method returns an Http Status code as a response.
+- Web API Action method
+	- It must be public in access
+	- It can't be a private, protected or internal
+	  method.
+	- It can't be static
+	- It must return a value
+	- It must be defined with a return type
+	- It can't be void
+	- It can overload
+	- It can't override
+
+Syntax:
+public IHttpActionResult GetProducts()
+        {
+            return Ok("Reponse from Get Products Success..");
+        }
+
+- The default Web API action methods are configured to handle Http -GET request from client.
+
+- You can specifiy action method to handle various request by using "HttpVerbs" defined through "AcceptVerbs" annotation.
+
+- Commonly uses HttpVerbs are
+	GET
+	POST
+	PUT
+	DELETE
+	OPTIONS
+	PURGE etc..
+
+Syntax:
+	[AcceptVerbs("GET")]
+	             or
+	[HttpGet]
+
+Ex: Add a new API Empty Controller
+	       "ProductsController.cs"
+
+using System.Web.Http;
+
+namespace ShoppingAPI.Controllers
+{
+    public class ProductsController : ApiController
+    {
+        //Action Method
+        public IHttpActionResult GetProducts()
+        {
+            return Ok("Reponse from Get Products Success..");
+        }
+        [HttpPost]
+        public IHttpActionResult AddProduct()
+        {
+            return Ok("Record Inserted into Database");
+        }
+    }
+}
+
+- Every Controller Action Method is handled by using ActionFilter
+- ActionFilter is derived from "ActionFilterAttribute"
+- Every Controller Action method is processed by using following methods
+	a) OnActionExecuting()
+	b) OnActionExecuted()
+	c) OnResultExecuting()
+	d) OnResultExecuted()
+
+FAQ: What is the purpose of ActionFilter in API Controller?
+A. Action Filters are used to handle pre and post action functionality.
+
+FAQ: Tell me some activities maintained "Pre Action" executing?
+A. Authentication and Authorization
+
+FAQ: Tell me some activities maintained "Post Action" execution?
+A. Caching, Logging
+
+FAQ: What is the role of ActionSelectors in API Controller? [AcceptVerbs] - [HttpGet]
+A. Action Selectors are used to handle "Request Behavior"
+
+
+FAQ: How ActionFilter Maps to Action Method in Controller?
+A:  By using "ActionExecutingContext" [FilterContext]
+	        |_ActionDescriptor
+	           |_Action Name  [GetProducts]
+	           |_ControllerDescriptor
+	              |_ControllerName [Products]
+
+
+      
+
+
+
+
+
+
+
