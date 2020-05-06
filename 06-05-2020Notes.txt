@@ -1,0 +1,71 @@
+	        Basic Web API Routes 
+- Routing is a Technique used in Web Application to configure User and SEO friendly URL's.
+
+Without Routing:
+http://www.amazon.in/products.aspx?category= electronics&subCategory=Mobiles
+
+With Routing:
+http://www.amazon.in/products/electronics/mobiles
+
+- Routing is required in Web API to handle the requests from the consumer.
+
+App_Start Folder :  It contains the "WebApiConfig.cs"
+	               where the API routes are 
+	               configured.
+
+Note: MVC routes are configured in "RouteConfig.cs"
+          in the folder "App_start".
+
+          Application Routes are in RouteConfig.cs
+          Service Routes are in WebApiConfig.cs
+
+           templateUrl: api/controllerName/parameter
+
+Syntax: WebApiConfig.cs
+ config.Routes.MapHttpRoute(
+                name: "DefaultApi",
+                routeTemplate: "api/{controller}/{id}",
+                defaults: new { id = RouteParameter.Optional }
+            );
+
+Syntax: ProductsController
+public class ProductsController : ApiController
+    {
+        //GET - api/products
+        public IHttpActionResult GetProducts()
+        {
+            return Ok("This is a GET Request to Access all Products");
+        }  
+        //GET - api/products/2
+        public IHttpActionResult GetProduct(int? id)
+        {
+            return Ok("This is a GET Request with Id Parameter");
+        }
+    }
+
+FAQ: Can we define multiple actions for same request?
+A. No . Better change the route request url to accept action.
+
+ routeTemplate: "api/{controller}/{action}/{id}",
+
+
+Ex:
+public class ProductsController : ApiController
+    {
+        //GET - api/products/GetProducts
+        public IHttpActionResult GetProducts()
+        {
+            return Ok("This is a GET Request to Access all Products");
+        }  
+        //GET - api/products/GetProduct/1
+        public IHttpActionResult GetProduct(int? id)
+        {
+            return Ok("This is a GET Request with Id Parameter");
+        }
+        //api/products/GetCategories
+        public IHttpActionResult GetCategories()
+        {
+            return Ok("This is a GET Request to access all categories");
+        }
+    }
+	        ADO.NET EF
