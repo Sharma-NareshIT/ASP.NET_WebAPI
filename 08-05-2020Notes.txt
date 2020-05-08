@@ -1,0 +1,221 @@
+Business Layer - ADO.NET
+1. Added a Business Layer
+	C# Class Library
+2. Added Contracts folder
+	IProduct.cs
+	  - rules for fields in order to interact with
+	    DB table.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.Contracts
+{
+    interface IProduct
+    {
+        int ProductId { get; set; }
+        string Name { get; set; }
+        decimal? Price { get; set; }
+    }
+}
+
+	IProductsCRUD.cs
+	   - rules for methods to handle CRUD
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BusinessLayer.Contracts
+{
+    interface IProductsCRUDContract
+    {
+        void AddProduct(string Name, decimal? Price);
+        void UpdateProduct(int ProductId, string Name, decimal? Price);
+        void DeleteProduct(int ProductId);
+    }
+}
+
+3. Added Services folder to implement contracts
+	-Product.cs
+	   implementation of  DB fields
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BusinessLayer.Contracts;
+
+namespace BusinessLayer.Services
+{
+    public class Product : IProduct
+    {
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+	-ProductsCRUDService.cs
+	   implementation of CRUDb methods
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using BusinessLayer.Contracts;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace BusinessLayer.Services
+{
+    public class ProductsCRUDService : IProductsCRUDContract
+    {
+        string strcon = ConfigurationManager.ConnectionStrings["ApiConnection"].ToString();
+        SqlConnection con;
+        SqlCommand cmd;
+        //Read
+        public IEnumerable<Product> GetProducts
+        {
+            get
+            {
+                List<Product> products = new List<Product>();
+                con = new SqlConnection(strcon);
+                con.Open();
+                cmd = new SqlCommand("spGetProducts", con);
+                SqlDataReader dr = cmd.ExecuteReader();
+                while(dr.Read())
+                {
+                    Product product = new Product();
+                    product.ProductId = Convert.ToInt32(dr["ProductId"]);
+                    product.Name = dr["Name"].ToString();
+                    product.Price = Convert.ToDecimal(dr["Price"]);
+                    products.Add(product);
+                }
+                dr.Close();
+                con.Close();
+                return products;
+            }
+        }
+        //Create [adding]
+        public void AddProduct(string Name, decimal? Price)
+        {
+            con = new SqlConnection(strcon);
+            con.Open();
+            cmd = new SqlCommand("spAddProducts",con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            SqlParameter paramName = new SqlParameter();
+            paramName.ParameterName = "@Name";
+            paramName.Value = Name;
+            cmd.Parameters.Add(paramName);
+
+            SqlParameter paramPrice = new SqlParameter();
+            paramPrice.ParameterName = "@Price";
+            paramPrice.Value = Price;
+            cmd.Parameters.Add(paramPrice);
+
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+        //Update
+        public void UpdateProduct(int ProductId, string Name, decimal? Price)
+        {
+            con = new SqlConnection(strcon);
+            con.Open();
+            cmd = new SqlCommand("spUpdateProducts", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            SqlParameter paramId = new SqlParameter("@ProductId", ProductId);
+            cmd.Parameters.Add(paramId);
+
+            SqlParameter paramName = new SqlParameter("@Name", Name);
+            cmd.Parameters.Add(paramName);
+
+            SqlParameter paramPrice = new SqlParameter("@Price", Price);
+            cmd.Parameters.Add(paramPrice);
+
+            cmd.ExecuteNonQuery();
+            con.Close();
+
+        }
+        //Delete
+        public void DeleteProduct(int ProductId)
+        {
+            con = new SqlConnection(strcon);
+            con.Open();
+            cmd = new SqlCommand("spDeleteProducts", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@ProductId", ProductId);
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+    }
+}
+
+4. Add reference of Business Layer into your Web API Project.
+      - Created a new Web API Project
+      - Added connection string in Web.Config
+
+<connectionStrings>
+    <add name="ApiConnection" providerName="System.Data.SqlClient" connectionString="Data Source=(local); Initial Catalog=ApiDb; user id=sa; pwd=123"/>
+  </connectionStrings>
+
+    - Add a new Controller  
+        "Web API Controller with Read/Write Actions"
+    - Name it as "ProductsController"
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using BusinessLayer.Services;
+
+namespace AmazonAPI.Controllers
+{
+    public class ProductsController : ApiController
+    {
+        ProductsCRUDService db = new ProductsCRUDService();
+        // GET: api/Products
+        public IEnumerable<Product> Get()
+        {
+            return db.GetProducts;
+        }
+
+        // GET: api/Products/5
+        public string Get(int id)
+        {
+            return "value";
+        }
+
+        // POST: api/Products
+        public void Post([FromBody]string value)
+        {
+        }
+
+        // PUT: api/Products/5
+        public void Put(int id, [FromBody]string value)
+        {
+        }
+
+        // DELETE: api/Products/5
+        public void Delete(int id)
+        {
+        }
+    }
+}
+
+
+
+
+
+	
