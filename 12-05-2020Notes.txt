@@ -1,0 +1,57 @@
+		REST
+- Roy Thomas Fielding  introduced REST in 2000.
+- Representational State Transfer
+- REST is an architecture
+- It primary aim is to provide a uniform way to communicate with provider. 
+- It uses simple contstraints to handle communication between consumer and provider.
+- RESTful is a service that uses all REST constraints. It comprises of REST Style.
+- REST uses a simple query request and send XML or JSON response.
+- REST architecture have two common persepectives they are
+	a) Are you building for Software [App]
+	b) Are you building for Service
+
+- If REST is not yet configured for Software or Service then its is known as "Null Style"
+- Null is the starting point of REST.
+- Null style is simply an empty set of constraints.
+
+Client-Server:
+============
+- The first constraint added to REST is Client-Server architectural style.
+- Separation of concerns in the priniciple of Client-Server.
+- Consumer is client and Provider is Server.
+- We can improve the protability of the UI across multiple platforms.
+- Consumer can consume from various devices and OS services.
+- Improves scalability and simiplies the server components.
+
+Stateless
+========
+- The next constraint to the client server interaction is the stateless constraint.
+- As per the rules of REST communication between client and server must be stateless.
+- REST is used over Http
+- Http is a stateless protocol.
+- Each request from cleint to server must contains all the information necessary to understand the request, and can't take advantage of any stored context on the server.
+- Hence the session state is kept entirely on the client.
+- Stateless constraint in REST introduces the features like visibility, reliability and scalablilty.
+- Server doesn't have to manage resource usage across requests.
+
+Cache:
+======
+- It is a constraint used to improve network efficiency.
+- It is important to define the REST request cacheable or non-cacheable.
+- If response is cachable then a client cache is given the right to re-use that response data for later.
+
+Uniform Interface:
+===============
+- The major feature for REST architectural style from other network based styles is its way of handling UI between the components.
+- It optimizes the request and makes it simple.
+- It is a simple Query request.
+- REST is defined by four interface constraints:
+	a) Identification of resources
+	b) Manipulation of resources throught the representations
+	c) Self-descriptive messages
+	d) Hypermedia as the engine of application state.
+
+
+
+
+
