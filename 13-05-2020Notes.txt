@@ -1,0 +1,79 @@
+		Rest Constraints
+		==============
+1. Null 
+2. Client-Server
+3. Stateless
+4. Cache
+5. Uniform Interface
+6. Layered System
+    - To improve the behavior for Internet-scale requirements, we have to add Layered System constraints.
+    - It allows an architecture to be composed of hierarchical layers.
+    - It enable clean separation and easy extensibility.
+    - The primary disadvantage of layered system is that they add overhead and latency to the processing of data.
+	Overhead - Memory Issues
+	Latency	- Time taken for response.
+7. Code-On-Demand
+    - The last constraint added for REST is  "Code-On-Demand-Style.
+    - It introduces Lazy Loading.
+    - It uses Asynchronous Approach
+    - Only the data that is required for specific situation is sent to client.
+
+Note: REST should implement any Architectural patterns to improve the performance. 
+	MVC, MVP, MVVM, MicroServices,
+	Black Board System, Broker Pattern
+	Event Driven Architecture etc..
+
+
+
+	  REST Architectural Elements
+	  ========================
+1. Data Elements
+
+  DataElement	  Modern Web Example
+  -----------------------------------------------------------------------
+  resource	       It is the conceptual target of hypertext
+	       reference. It specifies what to be
+	       delivered for a request.
+  resource Identifer    URI, URL 
+  representation   It specifies the type of content
+	             [Html document, JPG, JSON etc..]
+  representation metadata    Media Type, Last Modifed
+  resource metadata	             Source link, alternatives
+  control data	             Cache-Control
+
+2. Connectors
+    - REST uses various connector types to encapsualte the activities of accessing resources and transferring resource representations.
+    
+    Connector	Example
+    -----------------------------------------------------------------
+    client		libwww [wwwRoot]
+    server		Apache API
+    cache		Browser Cache
+    resolver	bind [DNS] 
+    tunnel		SOCKS, SSL after HTTP connect
+
+- Client initiates communication
+- Server listens and sends response.
+- Cache allows to avoid round trips
+- Resolver translates complete or partial resource identifiers into network native.
+- Tunnel is required for parsing through firewall
+
+3. Components
+    - REST components are responsible for handling overall application functionality or action.
+    
+   Component	Example
+   -------------------------------------------------------------------
+   origin server	IIS, Tomcat
+   gateway		squid CGI, Reverse proxy
+   proxy		Netscape Proxy
+   user agent	Netscape Navigator
+
+   	                REST Views
+- REST architectural views are used to describe how the element work together to form an architecture.
+- REST provides 3 types of views
+	a) Process View
+	b) Connector
+	c) Data
+
+
+
