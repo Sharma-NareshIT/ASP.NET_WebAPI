@@ -1,0 +1,106 @@
+	Web API Content Negotiation
+- Content Negotiation is the process of selecting the best representation for a given response when there are multiple representation available.
+- The client should have the ability to decide in which format they want the response, it can be XML or JSON, XML Atom etc.
+- Technically it is client and server negotiation.
+- Web API can understand in which format the client wants response by using following headers of request object.
+	1. Content-type
+	2. Accept
+	3. Accept-Charset
+	4. Accept-Encoding
+	5. Accept-Language
+
+Accept & Content-Type:
+- A request that is sent to the server includes Accept and Content-Type headers.
+- By using these the client sepcifiy the format for the response.
+
+    Content-Type [MIME] : application/xml returns XML
+    Content-Type : application/json return JSON
+    Accept: application/xml returns XML
+    Accept: application/json return JSON
+
+- Depending on Content-Type and Accept value in request object, the server sends the response.
+       "This is Known as Content Negotiation"
+
+Ex:
+1. Create a new Web API Project
+2. Install Entity Framework 6 from NuGet Package Manager and add to references.
+3. Add ConnectionString into Web.Config file
+
+ <connectionStrings>
+    <add name="ApiConnection" providerName="System.Data.SqlClient" connectionString="Data Source=(local); Initial Catalog=ApiDb; user id=sa; pwd=123" />
+  </connectionStrings>
+
+4. Goto "Models" folder and add following files
+	          Product.cs
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace AmazonAPI.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+	
+	          ProductsContext.cs
+using System.Data.Entity;
+namespace AmazonAPI.Models
+{
+    public class ProductsContext : DbContext
+    {
+        public ProductsContext()
+            :base("ApiConnection")
+        {
+        }
+       public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+5. Goto Controllers folder and add a new 
+	"Web API 2 Empty Controller"
+	
+	        "DemoController"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using AmazonAPI.Models;
+
+namespace AmazonAPI.Controllers
+{
+    public class DemoController : ApiController
+    {
+        ProductsContext db = new ProductsContext();
+        
+        //GET - api/demo
+        public IHttpActionResult Get()
+        {
+            return Ok(db.ProductsTable.ToList());
+        }
+
+        //GET - api/demo/1
+        public IHttpActionResult Get(int? id)
+        {
+            Product product = db.ProductsTable.Find(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+    }
+}
+
+Understanding Content-Type and Accept in Fiddler:
+- Open Fiddler
+- Start your API Project
+- 
+
+
