@@ -1,0 +1,83 @@
+Web API Content Negotiation
+
+FAQ's:
+1. What is Content Negotiation?
+2. Why we need Content Negotiation in Web API?
+3. How does the web API framework know in which format the client expects the response?
+4. How to request data in JSON?
+5. How to request data in XML?
+
+Ex: Testing Content Negotiation on Fiddler
+1. Open Fiddler
+2. Goto "Composer"
+3. Specify
+	Request : GET
+	URL        : https://localhost:44328/api/demo
+4. Click Execute
+5. Double click on response returned in fiddler.
+	[200 OK]
+
+Note : By default the response will be in JSON
+
+6. You can change the response content type into XML by specifying the requested content type in "Composer"
+
+      User-Agent: Fiddler
+      Host: localhost:44328
+      Content-type: application/xml
+
+FAQ: How to handle various formats of data in an application?
+A. Handling various formats of data in an application is managed by "Media-Type formatters".
+
+
+	       Media-Type Formatters
+	       ---------------------------------
+- Media type formatters are the classes that are responsbile for serializing the request/response data. So that the Web  API Framework can understand the requested data format and also send data in the format which the client expects.
+
+Class	                    MIME Type        Purpose
+============================================
+JsonMediaTypeFormatter 	             Handle JSON
+		application/json   format of data.
+		text/json
+-----------------------------------------------------------------------------
+XmlMediaTypeFormatter 	            Handle XML
+		application/xml    format of data
+		text/json
+-----------------------------------------------------------------------------
+
+FAQ: How to return the data in JSON format from Web API Service?
+A. This requires configuration of Media Type Formatting in Web API.
+
+Ex:
+1. Goto "WebApiConfig.cs" in "App_Start" folder
+2. Remove XMLFormatter from Media Type
+
+public static class WebApiConfig
+  {
+  public static void Register(HttpConfiguration config)
+        {
+        config.Formatters.Remove(config.Formatters.XmlFormatter);
+        ....................
+        }
+   }
+
+
+FAQ: How to return the data in XML format from Web API Service?
+A. This requires configuration of Media Type Formatting in Web API.
+
+Ex: Add following into WebApiConfig.cs
+
+ config.Formatters.Remove(config.Formatters.JsonFormatter);
+
+	       Swagger in Web API
+	       =================
+- Swagger is an API explorer
+- It is used in API documentation.
+- API documentation contains Help Pages
+- Help page contains information about the services provided by Web API application.
+- Swagger container API metadata.
+
+Install from NuGet Packages
+- Right Click on Reference
+- Manage NuGet Packages
+- Search for "SwashBuckle" [5.6] 
+
