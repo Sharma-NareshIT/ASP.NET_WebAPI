@@ -1,0 +1,118 @@
+PUT Method
+- It allows to update any entity.
+- It can search for specific entity based on primary key value or specific indexing technique.
+- Entity framework provides LINQ to Enity and Enity SQL Method for updating , which you can use for updating entity.
+	 a) UpdateModel()
+	 b) TryUpdateModel()
+- Put method for Production
+
+ Ex:
+[HttpPut]
+        public void UpdateProduct(int id, [FromBody] Product product)
+        {
+            Product prod = db.ProductsTable.Find(id);
+            prod.Name = product.Name;
+            prod.Price = product.Price;
+
+            db.SaveChanges();
+        }
+
+
+Test:
+      - open fiddler
+      - goto composer
+      - Choose request - PUT
+      - Specify URL:                   http://localhost:44305/api/products/2
+
+          	User-Agent: Fiddler
+	Host: localhost:44305
+	Content-Type: application/json
+	Accept: application/json
+
+      - Define new values in Request Body
+          {"Name": "Nike Sports Shoe", "Price":6100.32 }
+      - Execute
+
+
+- PUT method for development using HttpResponseMessage
+
+  [HttpPut]
+        public HttpResponseMessage UpdateProduct(int id, [FromBody] Product product)
+        {
+            try
+            {
+                var prod = db.ProductsTable.Find(id);
+                if(prod==null)
+                {
+                    return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Product Not Found by Speicfied Id=" + id.ToString());
+                }
+                else
+                {
+                    prod.Name = product.Name;
+                    prod.Price = product.Price;
+                    db.SaveChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK, prod);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ex);
+            }
+        }
+
+- PUT Method for development using "IHttpActionResult", which gives access to the HttpStatusCodes without using Request  and Response Object.
+
+Ex:
+ [HttpPut]
+        public IHttpActionResult UpdateProduct(int id, [FromBody] Product product)
+        {
+            try
+            {
+                var prod = db.ProductsTable.Find(id);
+                if(prod==null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    prod.Name = product.Name;
+                    prod.Price = product.Price;
+                    db.SaveChanges();
+
+                    return Ok(prod);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+API "DELETE" method
+
+Ex:
+[HttpDelete]
+        public IHttpActionResult DeleteProduct(int id)
+        {
+            try
+            {
+                Product product = db.ProductsTable.Find(id);
+                if(product==null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    db.ProductsTable.Remove(product);
+                    db.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+
+
