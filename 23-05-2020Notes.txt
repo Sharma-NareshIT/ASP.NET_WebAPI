@@ -1,0 +1,273 @@
+Controller Logic
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Web.Http;
+using WebAPIdemo.Models;
+
+namespace WebAPIdemo.Controllers
+{
+    public class ProductsController : ApiController
+    {
+        ProductsContext db = new ProductsContext();
+
+        //GET - api/products
+        public IHttpActionResult Get()
+        {
+            return Ok(db.ProductsTable.ToList());
+        }
+
+        //GET - api/products/{id}
+        public IHttpActionResult Get(int? id)
+        {
+            Product product = db.ProductsTable.Find(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+        //POST - api/products/AddProduct [method name optional]
+        [HttpPost]
+        public void AddProduct([FromBody] Product product)
+        {
+                db.ProductsTable.Add(product);
+                db.SaveChanges();
+        }
+        // PUT - api/products/1
+        [HttpPut]
+        public IHttpActionResult UpdateProduct(int id, [FromBody] Product product)
+        {
+            try
+            {
+                var prod = db.ProductsTable.Find(id);
+                if(prod==null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    prod.Name = product.Name;
+                    prod.Price = product.Price;
+                    db.SaveChanges();
+
+                    return Ok(prod);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+        [HttpDelete]
+        public IHttpActionResult DeleteProduct(int id)
+        {
+            try
+            {
+                Product product = db.ProductsTable.Find(id);
+                if(product==null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    db.ProductsTable.Remove(product);
+                    db.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.ToString());
+            }
+        }
+    }
+}
+
+
+index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Products API</title>
+    <style>
+        .section {
+            margin-top: 50px;
+        }
+    </style>
+    <link rel="stylesheet" href="Content/bootstrap.css" />
+    <script src="Scripts/jquery-3.5.1.js"></script>
+    <script src="Scripts/bootstrap.bundle.js"></script>
+    <script>
+        $(function () {
+            $("#btnAll").click(function () {
+                $.ajax({
+                    url: "api/products"
+                })
+                    .done(function (data) {
+                        $.each(data, function (key, value) {
+                            $(`<tr><td>${value.ProductId}</td><td>${value.Name}</td><td>${value.Price}</td><td><button class="Edit" data-toggle="modal" data-target="#dialogEditProduct" value=${value.ProductId}>Edit</button></td></tr>`).appendTo("#tbody");
+                        })
+                    })
+                    .fail(function () {
+                        alert("Something Went Wrong");
+                    })
+            })
+            $("#btnSearch").click(function () {
+                var id = $("#txtId").val();
+                var apiUrl = "api/products/" + id;
+                $.ajax({
+                    url: apiUrl
+                })
+                    .done(function (data) {
+                        $("#lblId").html(data.ProductId);
+                        $("#lblName").html(data.Name);
+                        $("#lblPrice").html(data.Price);
+                    })
+                    .fail(function () {
+                        alert("Something Went Wrong");
+                    })
+            })            
+            $("#btnAddProduct").click(function () {
+
+                var newProduct = {
+                    Name: $("#txtName").val(),
+                    Price: parseFloat($("#txtPrice").val())
+                };              
+                $.ajax({
+                    method: "POST",
+                    url: "api/products/AddProduct",
+                    data: newProduct
+                })
+                alert("Record Inserted");
+                location.reload();
+            })
+            $(document).on("click", ".Edit", function () {
+                var id = $(this).val();
+                var apiurl = "api/products/" + id;
+                $.ajax({
+                    url: apiurl
+                })
+                    .done(function (data) {
+                        $("#txtEditId").val(data.ProductId);
+                        $("#txtEditName").val(data.Name);
+                        $("#txtEditPrice").val(data.Price);
+                    })
+                    .fail(function () {
+                        alert("Something went Wrong");
+                    })
+            })
+            $("#btnSaveProduct").click(function () {
+                var newProduct = {
+                    ProductId: $("#txtEditId").val(),
+                    Name: $("#txtEditName").val(),
+                    Price: parseFloat($("#txtEditPrice").val())
+                };
+                $.ajax({
+                    method: "PUT",
+                    url: "api/products/" + newProduct.ProductId,
+                    data: newProduct
+                })
+                alert("Record Updated Successfully..");
+                location.reload();
+            })
+        })
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Products API</h2>
+        <div class="btn-toolbar bg-danger justify-content-between">
+            <div class="btn-group">
+                <button id="btnAll" class="btn btn-danger">Get All Products</button>
+                <button id="btnAdd" class="btn btn-danger" data-toggle="modal" data-target="#dialogAddProduct">Add Product</button>
+            </div>
+            <div class="btn-group">
+                <input type="text" id="txtId" class="form-control" placeholder="Product Id" />
+                <button id="btnSearch" class="btn btn-danger">Search</button>
+            </div>
+        </div>
+        <!--Dialog for Add Product-->
+        <div class="modal fade" id="dialogAddProduct" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add New Product</h3>
+                        <button type="button" class="close" data-dismiss="modal">x</button>
+                    </div>
+                    <div class="modal-body">
+                        <dl>
+                            <dt>Name</dt>
+                            <dd><input type="text" id="txtName" class="form-control" /></dd>
+                            <dt>Price</dt>
+                            <dd><input type="text" id="txtPrice" class="form-control" /></dd>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnAddProduct" class="btn btn-primary">Add</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Dialog for Edit Product-->
+        <div class="modal fade" id="dialogEditProduct" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Edit Product</h3>
+                        <button type="button" class="close" data-dismiss="modal">x</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="txtEditId" />
+                        <dl>
+                            <dt>Name</dt>
+                            <dd><input type="text" id="txtEditName" class="form-control" /></dd>
+                            <dt>Price</dt>
+                            <dd><input type="text" id="txtEditPrice" class="form-control" /></dd>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btnSaveProduct" class="btn btn-primary">Save</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="row">
+                <div class="col-6">
+                    <h3>Products List</h3>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Product Id</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-4">
+                    <h3>Details</h3>
+                    <dl>
+                        <dt>Product Id</dt>
+                        <dd id="lblId"></dd>
+                        <dt>Name</dt>
+                        <dd id="lblName"></dd>
+                        <dt>Price</dt>
+                        <dd id="lblPrice"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
