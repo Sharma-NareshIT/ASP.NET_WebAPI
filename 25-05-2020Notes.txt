@@ -1,0 +1,50 @@
+	          Web API2 Routing
+- Routing is a Technique introduced into Web Technologies to create and configure User and SEO friendly URL's.
+- ASP.NET introduced Routing from the .NET Framework 4.5.
+- Routing is implemented in WebForms, MVC, and API
+- Routing allows to specify how to handle request from client.
+
+
+1. Goto "App_Start" folder
+2. Add a new Class file "WebApiConfig.cs"
+
+   public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+               // configure your API services.
+        }
+    }
+
+
+- Routes are configure by using HttpConfiguration object.
+ 
+   Syntax:
+    config.Routes.MapHttpRoute("RouteName", "Template", new { defaults });
+
+
+ Ex:
+ public static class WebApiConfig
+    {
+        public static void Register(HttpConfiguration config)
+        {
+            // Web API routes
+
+            config.Routes.MapHttpRoute("ApiDemo", "nit-{controller}-{id}", new { id= 
+RouteParameter.Optional });
+
+		  (or)
+            config.Routes.MapHttpRoute(
+                  name: "DemoApiRoute",
+                  routeTemplate: "api/{controller}/{id}",
+                  defaults: new { id=RouteParameter.Optional }
+                );        
+        }
+    }
+
+- Route Parameters
+- Route Constraints
+- Attribute Routing
+
+
+	   
