@@ -1,0 +1,89 @@
+Route Attributes:
+
+name	        - Just a reference name for route
+routeTemplate -  Specifies the request pattern to be
+	            used in URL.
+	        - Every expression you defined in
+	          pattern is mandatory by default.
+	        - Request is expected in the same
+	          pattern how it is defined in Template
+	 
+    routeTemplate: "api/{controller}"
+
+    - URL is not allowed with any parameter, you can define only  api and controller name.
+    - There is no definition for parameter.
+    - If there is no parameter related definition in Template then the parameters can be passed as QueryString.
+
+             localhost:8080/api/products?id=2
+
+  - You have to configure route parameter
+
+    routeTemplate: "api/{controller}/{id}"
+
+  - This makes  "id" as a mandatory URL parameter.
+  -  How to make id as optional URL Parameter
+
+        defaults : new { id = UrlParameter.Optional }
+
+  - If any action method in API is defined with a different parameter , which is not configured in route then how to define in URL request?
+  A: You can define your parameter as querystring.
+
+                                      or
+       You can use attribute routing
+
+		Attribute Route
+     - It allows you to configure custom route for every controller action individually.
+     - Attribute routes were introduced into ASP.NET from 4.5.
+     - Attribute routes require mapping for HttpAttribute routes.
+    - You can use a "Route" attribute for action methods.
+    - It required mapping for Attribute route in "WebApiConfig"
+
+Syntax:
+         config.MapHttpAttributeRoutes();
+
+Controller:
+         [Route("api/singleproduct/{id}")]
+        public IHttpActionResult Get(int? id)
+        {
+            Product product = db.ProductsTable.Find(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+ 
+	         Route Constraints
+ - A constraint allows to restrict the URL parameter to a specific type of with in specific range.
+ 
+ Ex:
+        [Route("api/singleproduct/{id:range(1,3)}")]
+        public IHttpActionResult Get(int? id)
+        {
+            Product product = db.ProductsTable.Find(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
+
+Constraint		Example
+alpha			{x:alpha}
+bool			{x:bool}
+datetime			{x:datetime}
+decimal			{x:decimal}
+double			{x:double}
+float			{x:float}
+guid			{x:guid}
+int			{x:int}
+length		{x:length(6)} {x:length(1,20)}
+long		{x:long}
+max		{x:max(10)}
+maxlength	{x:maxlength(10)}
+min		{x:min(10)}
+minlength		{x:minlength(10)}
+range		{x:range(10,50)}
+regex		{x:regex(\+91[0-9]{10})}
+
