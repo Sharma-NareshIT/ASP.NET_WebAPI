@@ -1,0 +1,89 @@
+		Web API Core
+- Web API Core runs on the top of  ASP.NET Core
+- Stable ASP.NET Core is 3.1 [LTS]
+- ASP.NET Core can run on
+   .NET Framework  : Build Application for Windows
+   .NET Core Framework : Cross Platform, Open Source
+- ASP.NET Core = Web Forms + MVC + API
+- .NET Core is modular
+- .NET Core is asynchronous
+- .NET Core Faster development cycle
+- Same code runs on Development and Production
+- Cloud Ready 
+- Deploy and Run - New Roslyn JIT Compiler
+
+
+Setup Environment for .NET Core
+1. Download and Install .NET Core 3.1
+
+          https://dotnet.microsoft.com/download
+
+2. Add to your existing VS Studio 2019
+
+Creating a ASP.NET Core Web API Project:
+===================================
+1. Open Visual Studio
+2. Create a new Project
+3. Choose "ASP.NET Core Web Application"
+4. Name : WebApiCoreDemo
+5. Select
+	Framework	: .NET
+	Version		: 3.1
+	Template		: API
+
+	Web API Core Project Infrastructure
+
+Dependencies	: References you need for your app
+		  [NuGet Package Manager]
+
+Controller	s	: Application Logic
+		  [APIController]
+
+appSettings.json	: Application configuration settings
+		 [runtime, framework, connectionstring]
+
+Statup.cs		: It is middleware configuration file.
+		  - Enabling Services for applications
+		  - Managing Connection Context
+		  - Routing Configuration
+		  - Sessions
+		  - CORS
+		  - Cookies
+
+Program.cs	: It contains configuration for 
+		  build, test and deploy.
+
+
+
+	            Entity Framework Core
+Classes:
+========
+      Microsoft.EntityFrameworkCore.SqlServer 
+- DbContext
+- DbSet
+
+LINQ to Entity and Entity SQL Methods:
+=================================
+ToListAsync()
+FindAsync()
+Update()
+SaveChangesAsync()
+Remove()
+[Bind()]                - It is to bind the form data with action
+	             as parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
