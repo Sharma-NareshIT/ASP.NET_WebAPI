@@ -1,0 +1,130 @@
+
+                Implementing all CRUD in Web API Core
+
+1. Create a new ASP.NET Core Web Application
+2. Select "API" template with framework 
+	".NET Core 3.1"
+3. Install Package from Dependencies
+	Microsoft.EntityFrameworkCore.SqlServer [3.1.0]
+
+4. Write ConnectionString in "appSettings.json"
+
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "ApiConnection": "Data Source=(local); Initial Catalog=ApiDb; user id=sa; password=123"
+  }
+}
+
+5. Add a new Folder into project by name "Models"
+
+6. Create Model & Context class to Map to Database and Table
+
+	              "Product.cs"
+
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApiCoreDemo.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+
+Note:
+ - Context Class uses DbContextOptions for current context
+	
+      ProductsContext(DbContextOptions<ProductsContext> options)
+          :base(options)  
+      {
+
+       }
+
+ - DbContextOptions contain information about connection, which is accessed from Middleware.
+ - It is passed in the "base(options)"
+
+		"ProductsContext.cs"
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApiCoreDemo.Models
+{
+    public class ProductsContext : DbContext
+    {
+        public ProductsContext(DbContextOptions<ProductsContext> options)
+            :base(options)
+        {
+
+        }
+        public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+7. Goto "Startup.cs"
+
+using Microsoft.EntityFrameworkCore;
+using WebApiCoreDemo.Models;
+
+ public void ConfigureServices(IServiceCollection services)
+        {
+            // below AddControllers()
+
+          services.AddDbContext<ProductsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ApiConnection")));
+        }
+
+8. Goto Controllers and Add "API Core Controller - Empty"
+	       "ProductsController"
+ 
+Note:
+    - API Controller is derived from "ControllerBase"
+    - It is marked with "[ApiController] " annotation
+    - Route for controller is defined by using "Attribute Routing".
+   
+Syntax:
+    [Route("api/products")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+    }
+
+	         "ProductsController"
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApiCoreDemo.Models;
+
+namespace WebApiCoreDemo.Controllers
+{
+    [Route("api/products")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        private ProductsContext _dbContext;
+        public ProductsController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+        //api - GET
+        public async Task<IEnumerable<Product>> GetProducts()
+        {
+            return await _dbContext.ProductsTable.ToListAsync();
+        }
+        //api - POST
+
+        //api - PUT
+
+        //api - DELETE
+    }
+}
