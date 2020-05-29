@@ -1,0 +1,216 @@
+	  Asynchronous Programming in C#
+	  ==============================
+- Async programming is an alternative for Multi Threading.
+- C# by default uses blocking mechanism
+  [After making request it will wait until response is back, it can process next reuqest only after previous response]
+- Async will introduce Un-Blocking technique.
+  [After making request it will not wait for response, it moves to next request -which ever response is ready it is returned back]
+- In C# "Task Parallel library" allows async approach
+
+	a) async	- UnBlock  
+	b) await	- Child Task [ Indicates that it runs
+			       parallel]
+	c) Task	- Parent Task [Creates the task]
+
+Ex: Blocking Technique [Without Async]
+
+1. Create a new Windows App
+2. Add controls
+	[Button]
+	[Label]
+3. Code
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Threading;
+using System.IO;
+
+namespace AsyncDemo
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private int GetCount()
+        {
+            Thread.Sleep(8000);
+            int count = 0;
+            using(StreamReader reader = new StreamReader(@"C:\WebAPIProjects\help.txt"))
+            {
+                string content = reader.ReadToEnd();
+                count = content.Length;
+            }
+            return count;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int count = 0;
+            label1.Text = "Reading Please Wait..";
+            count = GetCount();
+            label1.Text = count + " Characters";
+        }
+    }
+}
+
+Ex: UnBlocking Technique - Task Parallel
+
+Code:
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Threading;
+using System.IO;
+
+namespace AsyncDemo
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private int GetCount()
+        {
+            Thread.Sleep(8000);
+            int count = 0;
+            using(StreamReader reader = new StreamReader(@"C:\WebAPIProjects\help.txt"))
+            {
+                string content = reader.ReadToEnd();
+                count = content.Length;
+            }
+            return count;
+        }
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            int count = 0;
+            label1.Text = "Reading Please Wait..";
+
+            Task<int> task = new Task<int>(GetCount);
+            task.Start();
+
+            count = await task;
+            label1.Text = count + " Characters";
+        }
+    }
+}
+
+Ex: Parallel Foreach
+
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace ParallelForEachExample
+{
+    class Program
+    {
+        static void Main()
+        {
+            string[] colors = {
+                                      "1. Red",
+                                      "2. Green",
+                                      "3. Blue",
+                                      "4. Yellow",
+                                      "5. White",
+                                      "6. Black",
+                                      "7. Violet",
+                                      "8. Brown",
+                                      "9. Orange",
+                                      "10. Pink"
+                                  };
+            Console.WriteLine("Traditional foreach loop\n");
+
+            var sw = Stopwatch.StartNew();
+            foreach (string color in colors)
+            {
+                Console.WriteLine("{0}, Thread Id= {1}", color, Thread.CurrentThread.ManagedThreadId);
+                Thread.Sleep(10);
+            }
+            Console.WriteLine("foreach loop execution time = {0} seconds\n", sw.Elapsed.TotalSeconds);
+            Console.WriteLine("Using Parallel.ForEach");
+            sw = Stopwatch.StartNew();
+            Parallel.ForEach(colors, color =>
+            {
+                Console.WriteLine("{0}, Thread Id= {1}", color, Thread.CurrentThread.ManagedThreadId);
+                Thread.Sleep(10);
+            }
+           );
+            Console.WriteLine("Parallel.ForEach() execution time = {0} seconds", sw.Elapsed.TotalSeconds);
+            Console.Read();
+        }
+    }
+}
+	
+           Web API Core Application with Angular Integration
+           ==========================================
+1. Create a new Project
+2. Select "ASP.NET Core Web Application"
+3. Choose  "Angular" Template
+
+	Project Name : WebApiAngular
+	.NET Core	      : 3.1
+
+4. Your project comprises of Server  Side and Client Side app.
+	Server Side : ASP.NET Core with Web API
+	Client Side  : Angular
+
+  Run Server App :  Ctrl + F5
+
+  Run Client App
+  - Download and Install - Node Js for NPM [Node Package Manager] 
+	https://nodejs.org/en/download/
+
+	C:\>node -v
+	C:\>npm -v     [testing version]
+
+  - Install Angular CLI on your PC from command prompt
+
+	C:\>npm install -g @angular/cli@latest
+
+  	C:\>ng --version
+
+
+ - Goto your API Angular Project
+ - Open the Client App location in Command prompt
+ - Run the command
+	
+    C:\.....\ClientApp> npm install
+  
+ - After extracting you can upgrade to latest
+
+  C:\.....\ClientApp> ng update @angular/cli @angular/core
+
+   
+       
+			 
+	
+
+
+
+
+
+
+
+
+
+
+
