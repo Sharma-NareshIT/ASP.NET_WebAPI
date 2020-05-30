@@ -1,0 +1,131 @@
+- Goto Client APP location in Command Prompt
+- Run
+	> npm install     [package.json]
+
+  It is used to install all packages required for angular application.
+
+Note: All packages are copied into "node_modules" folder,
+          include node_modules into project.
+
+
+  To Run Client Application form command prompt use
+
+	 C:\....\ClientApp> ng serve
+		             npm start
+
+ - Client App Server Starts Listening on : 	      	http://localhost:4200
+ - Open any browser and request
+	http://localhost:4200
+
+	 > ng serve --o   [it starts and opens in browser]
+
+
+
+
+
+	        Web API Core CRUD Operations
+	               [Creating RESTful ]
+- Create ASP.NET Web API Core Application 
+- Install "Entity Framework Core SqlServer" package
+- Goto "appSettings.json" and add Connection String
+
+  {
+  "Logging": {
+      "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+      }
+    },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "ApiConnection": "Data Source=(local); Initial Catalog=ApiDb; user id=sa; password=123"
+  }
+}
+
+2. Add a new folder into project by name
+	   "Models"
+
+3. Add a new class file
+		"Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApiAngular.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+
+4. Add Context class into Models
+	      "ProductsContext.cs"
+
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApiAngular.Models
+{
+    public class ProductsContext : DbContext
+    {
+        public ProductsContext(DbContextOptions<ProductsContext> options)
+            :base(options)
+        {
+
+        }
+        public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+5. Goto "Startup.cs" [Middleware Configuration]
+
+using Microsoft.EntityFrameworkCore;
+using WebApiAngular.Models;
+
+public void ConfigureServices(IServiceCollection services)
+        {
+           services.AddDbContext<ProductsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ApiConnection")));
+           // other services
+        }
+
+6. Add a new Controller into "Controllers" folder
+    - Select "API Empty Controller"
+    - Name as "ProductsController"
+
+All action results are derived from "ActionResult" base
+Action methods in API Core Controller will use "ActionResult" are the return type.
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApiAngular.Models;
+
+namespace WebApiAngular.Controllers
+{
+    [Route("api/products")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        private ProductsContext _dbContext;
+        public ProductsController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+        //GET - api/products
+        public async  Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+          return await _dbContext.ProductsTable.ToListAsync();
+        }
+    }
+}
+     
+
