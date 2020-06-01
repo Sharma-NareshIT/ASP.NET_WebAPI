@@ -1,0 +1,98 @@
+		Client Application 
+	 	[Project Structure]
+
+File / Folder	Description
+=================================================
+e2e		End-to-End configuration for
+		testing your application.
+		[Development, Quality, Production]
+
+src		It comprises of Project resources
+		which includes application resources
+		like component, services, pipes, etc..
+
+angular.json	It contains resources configuration
+		i.e statup page, assets, styles, scripts
+		location etc..
+
+tslint.json		It contains the rules for "TypeScript"
+		language used in Angular.
+
+
+src/app		It contains application resources like
+		component, services etc.
+
+src/assets	It contains non-dynamic files like
+		text, pdf, images etc..
+
+src/index.html	It is the startup file, you application
+		starts with index.html
+
+src/styles.css	It contains global styles , which are
+		accesible to all components.
+
+src/app/app.module.ts    It is the module that configures,
+		       and registers all the modules,
+		       components, services, pipes etc.
+		       Any component that you design
+		      in angular application must be 
+		      registered in "app.module.ts"
+
+
+	       Angular Framework Components
+	      ============================
+
+Component	: It is a template for angular application
+		  It comprises of 
+		  a) Presentation [in HTML]
+		  b) Styles [in CSS]
+		  c) Logic  [in TypeScript]
+
+Service		: It is a predefined business logic which
+		   you can inject into any component.
+		  And handle any specific functionality.
+
+Pipe		: It provides options for filter, sorting
+		  and formatting data.
+
+
+		Services in Angular
+- A service in angular is pre-define business logic, which you re-use  across various components.
+- Angular service is a "TypeScript" class that comprises of Services methods.
+- Service method is designed to return any specifiec functionality.
+
+Creating a new Service:
+=====================
+1. Goto "App" folder in  ClientApp\src
+
+2. Add a new Item → TypeScript File
+
+3. Name it as "data.service.ts"
+
+
+import { Injectable } from '@angular/core';
+@Injectable()
+export class DataService {
+  public GetProducts() {
+    return [
+      { Name: "TV", Price: 45000.55 },
+      { Name: "Nike Casuals", Price: 1200.44 }
+    ];
+  }
+}
+
+4. Register the service in "app\app.module.ts"
+
+providers: [DataService, ProductsdataService],
+
+Note: You can generate a service by using Angular CLI Command
+              C:...\ClientApp> ng generate service productsdata
+		       		(or)
+		       ng  g  s productsdata
+
+
+
+
+
+
+
