@@ -1,0 +1,129 @@
+	           Client Side Services
+1. Add a new service into Client App
+   - Goto  "app" folder 
+   - Add a new TypeScript file
+   	"productsdata.service.ts"
+
+import { Injectable } from '@angular/core';
+
+@Injectable()
+
+export class ProductsdataService {
+
+  public GetProducts() {
+    return [
+      { Name: "TV", Price: 34000.44 },
+      { Name: "Mobile", Price: 12000.32 },
+      { Name: "Shoe", Price: 3400.32 }
+    ];
+  }  
+}
+
+2. Register the service in "app/app.module.ts"	
+
+import { ProductsdataService } from './productsdata.service';
+
+providers: [ProductsdataService],
+
+3. Create a new Component and Consume the Service
+    - Components are building block for Angular App
+    - Component comprises of 
+	Markup in  ".html"
+	Styles   in  ".css"
+	Logic    in  ".ts"
+     - Goto "app" folder and add a new subfolder by name
+	"consumedata"
+     - Add following files into folder
+	  - consumedata.component.ts
+	  - consumedata.component.html
+	  - consume.data.component.css
+
+4. Goto "consumedata.component.ts"
+
+import { Component, OnInit } from '@angular/core';
+import { ProductsdataService } from '../productsdata.service';
+
+@Component({
+  selector: 'app-consumedata',
+  templateUrl: 'consumedata.component.html',
+  styleUrls: ['consumedata.component.css']
+})
+
+export class ConsumeDataComponent implements OnInit {
+  public products = [];
+  constructor(private data: ProductsdataService) { }
+  ngOnInit() {
+    this.products = this.data.GetProducts();
+  }
+}
+
+5. Goto "consumedata.component.html"
+
+<div class="container">
+  <h2>Products Data</h2>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of products">
+         <td>{{item.Name}}</td>
+         <td>{{item.Price}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+6. Goto "consumedata.component.css"
+
+.container {
+    justify-content:center;
+    width:400px;
+    align-items:center;
+    margin:auto;
+    padding:20px;
+    margin-top:30px;
+    border:2px solid darkcyan;
+    box-shadow:2px 2px 4px darkcyan;
+    border-radius:10px;
+}
+
+7. Goto "app.module.ts" and register your component
+
+import { ConsumeDataComponent } from './consumedata/comnsumedata.component';
+
+declarations: [
+      .....................
+       ConsumeDataComponent
+  ]
+ providers: [ProductsdataService],
+ bootstrap: [ConsumeDataComponent]
+
+
+8. Goto Index.html in "src" folder
+
+ <body>
+   <app-consumedata> </app-consumedata>
+ </body>
+
+
+       Consuming Data from ASP.NET Core Web API
+       ======================================
+- You need angular "HttpClient" module to handle Ajax calls
+- You need "rxjs" Observable.
+- rxjs is used for Asynchronous calls from client side.
+
+
+
+
+
+
+
+
+
+
+	
+
