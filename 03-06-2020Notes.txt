@@ -1,0 +1,168 @@
+		Angular HttpClient 
+- HttpClient module provides the HttpClient object that comprises of properties and methods that are used to handle interaction with API service.
+- HttpClient uses "XMLHttpRequest" object to handle request from client.
+- It is defined in "@angular/common/http"
+
+Syntax:
+	private http:HttpClient
+	http.get()
+	http.post()
+
+	                  RxJS
+- Reative Extension for JavaScript
+- It introduces Reactive Programming with JavaScript.
+- It deals with Asynchronous calls.
+- RxJs Components
+	a) Observable
+	b) Observer
+	c) Subscription
+	d) Operators
+	e) Subject
+	f) Schedulers
+
+Observable : 
+- It creates a observer
+- It identifies the data type and its structure
+- It source datatype is attached with a function , which inlcudes JavaScript events or HttpRequests.
+
+Subscriber: 
+- It is used to execute the observable.
+- We have to subscribe to the observable.
+
+
+Steps to Communicate with Web API:
+1. Create a new Service
+2. Inject HttpClient Module and Observable
+3. Make an Asynchronous call from Angular Service to Web API RESTful service.
+4. Return functionality by creating a service method.
+5. Inject the service into a component.
+6. Use Subscriber to execute the Observable and store the returned data.
+
+
+Ex:
+1. Goto Client App and Create a  Contract for define the DataStructure
+	- Goto "src\app" folder
+	- Add a new TypeScript file
+	- Name it as "IProduct.ts"
+	
+		"IProduct.ts"
+  	interface IProduct 
+                 {
+  	 ProductId: number;
+ 	 Name: string;
+ 	 Price: number;
+	}
+
+2. Add a new Service into Client App
+
+	>ng generate service  productsdata
+		     (or)
+	>ng g s productsdata
+
+3. A new service is added into "src/app" folder
+
+	      "productsdata.service.ts"
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class ProductsdataService {
+  constructor(private http: HttpClient) { }
+  public geturl = "https://localhost:44383/api/products";
+  public GetProducts():Observable<IProduct[]> {
+    return this.http.get<IProduct[]>(this.geturl);
+  }
+}
+
+4. Register service in app.module.ts
+
+import { ProductsdataService } from './productsdata.service';
+
+providers: [ProductsdataService],
+
+5. Create a new Component in your project
+	         "consumedata" [in app folder]
+   	- consumedata.component.ts
+	- consumedata.component.html
+	- consumedata.component.css
+
+6. consumedata.component.ts
+
+  import { Component, OnInit } from '@angular/core';
+import { ProductsdataService } from '../productsdata.service';
+
+
+@Component({
+  selector: 'app-consumedata',
+  templateUrl: 'consumedata.component.html',
+  styleUrls: ['consumedata.component.css']
+})
+
+export class ConsumeDataComponent implements OnInit {
+  public products = [];
+  constructor(private data:ProductsdataService) {
+
+  }
+  ngOnInit() {
+    this.data.GetProducts().subscribe(data => this.products = data);
+  }
+}
+
+7. Goto "consumedata.component.html"
+
+<div class="container">
+  <h2>Products Data</h2>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of products">
+         <td>{{item.productId}}</td>
+         <td>{{item.name}}</td>
+         <td>{{item.price}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+8. Goto "app.module.ts"
+
+@NgModule({
+  declarations: [
+     ConsumeDataComponent
+  ]
+    bootstrap: [ConsumeDataComponent]
+  })
+
+9. Goto "index.html"
+
+<body>
+     <app-consumedata></app-consumedata>
+</body>
+  
+10. You can add styles in
+	"consumedata.component.css"
+
+.container {
+    justify-content:center;
+    width:400px;
+    align-items:center;
+    margin:auto;
+    padding:20px;
+    margin-top:30px;
+    border:2px solid darkcyan;
+    box-shadow:2px 2px 4px darkcyan;
+    border-radius:10px;
+}
+
+		Posting Data
+- You need a Form in Angular to post data into API
+- Angular have 2 types of Forms
+	a) Template Driven Form
+	b) Model Driven or Reactive Form
