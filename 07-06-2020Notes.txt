@@ -1,0 +1,363 @@
+	       Web API Core with Angular
+1. Create a new ASP.NET Core Web Application
+2. Select "Angular" template
+3. Name it as "WebApiAngular"
+4. Install the Package
+	"Entity Framework Core SqlServer"
+5. Add Connection String in "appSettings.json"
+
+{
+  "Logging": {
+      "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+      }
+    },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "ApiConnection": "Data Source=(local); Initial Catalog=ApiDb; user id=sa; password=123"
+  }
+}
+
+6. Add a new folder "Models"
+7. Add following classes
+		"Product.cs"
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApiAngular.Models
+{
+    [Table("tblProducts")]
+    public class Product
+    {
+        [Key]
+        public int ProductId { get; set; }
+        public string Name { get; set; }
+        public decimal? Price { get; set; }
+    }
+}
+		ProductsContext.cs
+using Microsoft.EntityFrameworkCore;
+
+namespace WebApiAngular.Models
+{
+    public class ProductsContext : DbContext
+    {
+        public ProductsContext(DbContextOptions<ProductsContext> options)
+            :base(options)
+        {
+
+        }
+        public DbSet<Product> ProductsTable { get; set; }
+    }
+}
+
+8. Goto "Startup.cs"
+
+using Microsoft.EntityFrameworkCore;
+using WebApiAngular.Models;
+
+  public void ConfigureServices(IServiceCollection services)
+        {
+         ...........
+         services.AddDbContext<ProductsContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ApiConnection")));
+         ......
+       }
+
+9. Add a new "Web API Controller - Empty" into Controllers
+
+		"ProductsController"
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApiAngular.Models;
+
+namespace WebApiAngular.Controllers
+{
+    [Route("api/products")]
+    [ApiController]
+    public class ProductsController : ControllerBase
+    {
+        private ProductsContext _dbContext;
+        public ProductsController(ProductsContext context)
+        {
+            _dbContext = context;
+        }
+
+        //GET - api/products
+
+        public async  Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+           return await _dbContext.ProductsTable.ToListAsync();
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Product>> GetProduct(int id)
+        {
+            var product = await _dbContext.ProductsTable.FindAsync(id);
+            if(product==null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Product>> PostProduct(Product product)
+        {
+            _dbContext.ProductsTable.Add(product);
+            await _dbContext.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetProduct), new { id=product.ProductId });
+        }
+        [HttpPut("{id}")]
+        public async Task<ActionResult> PutProduct(int id, Product product)
+        {
+            if(id != product.ProductId)
+            {
+                return BadRequest();
+            }
+            _dbContext.Entry(product).State = EntityState.Modified;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                 else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Product>> DeleteProduct(int id)
+        {
+            var product = await _dbContext.ProductsTable.FindAsync(id);
+            if(product is null)
+            {
+                return NotFound();
+            }
+            _dbContext.ProductsTable.Remove(product);
+            await _dbContext.SaveChangesAsync();
+            return product;
+        }
+    }
+}
+
+10. Goto ClientApp in Project
+	               Src → app 
+
+11. Add a new TypeScript File 
+		"IProduct.ts"
+interface IProduct {
+  productId: number;
+  name: string;
+  price: number;
+}
+
+12. Add a new Service into "app" folder
+      - Add a new TypeScript file
+	   "productsdata.service.ts"
+      - You can generate from Angular CLI Commands using command prompt
+	C:\...ClientApp> ng g s productsdata
+
+	  "productsdata.service.ts"
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+
+@Injectable()
+export class ProductsdataService {
+  constructor(private http: HttpClient) { }
+  public geturl = "https://localhost:44383/api/products";
+  public posturl = "https://localhost:44383/api/products";
+
+  public GetProducts():Observable<IProduct[]> {
+    return this.http.get<IProduct[]>(this.geturl);
+  }
+
+  public AddProducts(data) {
+    return this.http.post(this.posturl, data);
+  }
+}
+
+13. Add a new folder into "src\app" 
+	     "consumedata"
+14. Add following files
+	  consumedata.component.ts
+	  consumedata.component.html
+	  consumedata.component.css
+                               or
+   C:\..ClientApp> ng g c  consumedata
+
+15. Goto "consumedata.component.ts"
+
+import { Component, OnInit } from '@angular/core';
+import { ProductsdataService } from 
+'../productsdata.service';
+
+import { NgForm } from '@angular/forms';
+
+
+@Component({
+  selector: 'app-consumedata',
+  templateUrl: 'consumedata.component.html',
+  styleUrls: ['consumedata.component.css']
+})
+
+export class ConsumeDataComponent implements OnInit {
+  public products = [];
+  constructor(private data:ProductsdataService) {
+
+  }
+  ngOnInit() {
+    this.data.GetProducts().subscribe(data => this.products = data);
+  }
+  public SubmitData(form: NgForm) {
+    let newProduct = {
+      name: form.value.name,
+      price: parseFloat(form.value.price)
+    };
+    this.data.AddProducts(newProduct).subscribe(
+      res => { console.log("Inserted") },
+      err => { console.log(err)}
+    );
+    alert('Record Inserted');
+    location.reload();
+  }
+}
+
+16. Goto "consumedata.component.html"
+
+<div class="container">
+  <h2>Products Data</h2>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of products">
+         <td>{{item.name}}</td>
+         <td>{{item.price|currency:'INR'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="container">
+  <form #form="ngForm" method="post" (submit)="SubmitData(form)" >
+    <h2>Register Product</h2>
+    <dl>
+      <dt>Name</dt>
+      <dd><input name="name" ngModel #name="ngModel" type="text" class="form-control" /></dd>
+      <dt>Price</dt>
+      <dd><input type="text" name="price" ngModel #price="ngModel" class="form-control" /></dd>
+    </dl>
+    <button class="btn btn-primary btn-block">Register</button>
+  </form>
+</div>
+
+17. Goto "app.module.ts"
+
+  providers: [ProductsdataService],
+  bootstrap: [ConsumeDataComponent]
+
+
+	 	CORS
+- CORS is Cross Origin Resource Sharing
+- CORS is not a security feature.
+- CORS is a W3C standard that allows a server to relax the same-origin policy.
+- Browser security prevents a web page from making request to a different domain.
+- The restriction is called as "Same-Origin-Policy"
+- It is more safer that earlier technique "JSONP"
+- CORS Specification comprises of
+	1. General Headers
+		- Request URL
+		- Request Method
+		- Status Code
+	2. Response Header
+		- Content-Encoding
+		- Content-Type
+		- Server
+		- Set-Cookies
+		- Transfer-Encoding
+		- Vary
+	3. Request Headers
+		- Accept
+		- Accept-Encoding
+		- Accpet-Language
+		- Connection
+		- Host
+		- Origin
+		- User-Agent
+
+
+	     Enable CORS for Web API Core
+1. Goto WebAPI Core application
+2. Install a Package
+	"Microsoft.AspNetCore.Cors"
+3. Goto Middleware configuration
+	"Startup.cs"
+// Configure Services
+public void ConfigureServices(IServiceCollection services)
+        {
+        .......
+        services.AddCors();
+        ...........
+        }
+
+// Use Services
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+             app.UseCors(options => 
+              options.WithOrigins("http://localhost:8080")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+            );
+        }
+
+
+Start Your API Application → Ctrl + F5
+Start Your Client Application from Command Prompt
+	> ng serve --port 8080
+
+
+	    Enable CORS in Web API 2
+	    ======================
+1. Install Package
+
+	"Microsoft.AspNet.WebApi.Cors"
+
+2. Goto "WebApiConfig.cs" in "App_Start"
+
+    public static void Register( .... )
+    {
+           config.EnableCors();
+    }
+     
+3. Goto Web API Controller
+     using System.Web.Http.Cors;
+
+     [EnableCors(origins: "http://localhost:8080", header: "*", methods: "*")]
+     public class ProductsController : ApiController 
+     {
+
+     }
+
+               Web API Authentication and Authorization
+- Authentication and Authorization is handled in Web API by using  Filters.
+- ASP.NET MVC Framework provides Authorization Filters
+	a) Authorize
+	b) AllowAnonymous
+
+OWIN 
+OAuth
